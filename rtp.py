@@ -27,53 +27,91 @@ st.write("The pupose of this application is to demonstrate the value of Machine 
     predictions for a class.")
 
 st.set_option('deprecation.showfileUploaderEncoding', False)
-uploaded_file = st.file_uploader("Choose a csv file", type="csv")
 
-#This causes the script to stop and not throw an error flag after initiation.
-if uploaded_file is None:
-    st.stop()
+choose_option = st.selectbox(
+    "Choose a Task",
+    [
+        " ",
+        "1. Upload & Display Raw Data",
+        "2. Create Data Bar Chart",
+        "3. Train Model and Predict"
+    ]
+    )
 
-if uploaded_file is not None:
-    bytes_data = uploaded_file.read()
-    encoding = 'utf-8'
-    s = str(bytes_data, encoding)
-    data = StringIO(s)
-    df = pd.read_csv(data, index_col=False)
-    st.write(df.head(3))
-    st.text(f"Your dataset contains {len(df)} rows and {len(df.columns)} columns")
+def upload_file():
+    uploaded_file = st.file_uploader("", type = "csv")
+    if uploaded_file is None:
+        st.stop()
+    if uploaded_file is not None:
+        df=pd.read_csv(uploaded_file)
+        df = pd.DataFrame(df)
+    return df
 
-#This calculates the sum per column.  This gets used in the bar chart plot script
-x=np.arange(len(df.columns))
-col_sums = []
-for column in df.columns:
-    sums = sum(df[column])
-    col_sums.append(sums)
+def bar_chart(df):
+    x=np.arange(len(df.columns))
+    col_sums = []
+    for column in df.columns:
+        sums = sum(df[column])
+        col_sums.append(sums)
 
-#creating the bar chart script
-ys = np.arange(len(df.columns))
-x_labels = df.columns
-my_colors = ["red","green","black","blue","yellow", "magenta"]
+    ys = np.arange(len(df.columns))
+    x_labels = df.columns
+    my_colors = ["red","green","black","blue","yellow", "magenta"]
 
-fig, ax = plt.subplots(figsize = (12,10))
-plt.bar(ys,col_sums,color = my_colors)
+    fig, ax = plt.subplots(figsize = (12,10))
+    plt.bar(ys,col_sums,color = my_colors)
 
-plt.xticks(ys, x_labels,rotation=90)
-plt.xlabel('Features')
-plt.ylabel('Model Attribute(sums)')
-plt.title("Pilot Attributes Bar Chart", fontsize=16)
-st.pyplot(fig)
+    plt.xticks(ys, x_labels,rotation=90)
+    plt.xlabel('Features')
+    plt.ylabel('Model Attribute(sums)')
+    plt.title("Pilot Attributes Bar Chart", fontsize=16)
+    return fig
 
-y=df["# of Retrains"]
-X = df.drop("# of Retrains", axis=1)
+def ml(df):
+    y=df["# of Retrains"]
+    X = df.drop("# of Retrains", axis=1)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,y, random_state=42, test_size = 0.2)
+    estimator = gbr()
+    estimator.fit(X_train, y_train)
+    return estimator
 
-#splitting the train and test data
-X_train, X_test, y_train, y_test = train_test_split(
-    X,y, random_state=42, test_size = 0.2)
+#creates a sidebar slider
+def get_user_input(df):
+    value = []
+    names = df.columns
+    dictionary = {}
+    #iteration to create the sliders
+    for name in names:
+        minimum = 0 #as item because of the int32, int mismatch
+        maximum = 1
+        sliders = st.sidebar.slider(str(name), minimum, maximum, 1)
+        value.append(sliders)
+    #return value
+    dictionary = dict(zip(names, value))
+    features = pd.DataFrame(dictionary, index=[0])
+    return features
 
-#creating the model as a variable
-estimator = gbr()
+def main():
+    if choose_option == "1. Upload & Display Raw Data":
+        df = upload_file()
+        st.write(df.head())
+        
+        return df
 
-#fitting the model
-estimator.fit(X_train, y_train)
+    if choose_option == "2. Create Data Bar Chart":
+        df = upload_file()
+        fig = bar_chart(df)
+        st.pyplot(fig)
 
-st.write(estimator.score(X_test, y_test))
+    if choose_option == "3. Train Model and Predict":
+        df=upload_file()
+        estimator = ml(df)
+        features = get_user_input(df.drop(columns = "# of Retrains"))
+        st.write(features)
+        output = np.round(estimator.predict(features))
+        st.write(f" The prediction for this student is {abs(output.item()):.0f} retrain(s)")
+
+
+if __name__ == "__main__":
+    main()
