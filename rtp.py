@@ -14,7 +14,7 @@ import time
 
 #st.image('INDEX2.jpg', width=700)
 #The Header
-st.markdown("<h1 style='text-align: center; color: blue; '>RETRAIN PREDICTION APP</h1>" \
+st.markdown("<h1 style='text-align: center; color: red; '>RETRAIN PREDICTION APP</h1>" \
     , unsafe_allow_html=True)
 
 st.subheader("READ ME:")
@@ -95,7 +95,7 @@ def get_user_input(df):
 def main():
     if choose_option == "1. Upload & Display Raw Data":
         df = upload_file()
-        st.write(df.head())
+        st.write(df.head(40))
         
         return df
 
