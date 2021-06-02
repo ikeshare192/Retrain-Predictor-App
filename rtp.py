@@ -1,17 +1,11 @@
-import random
 import numpy as np
 import pandas as pd
 import pickle
 from matplotlib import pyplot as plt
 import seaborn as sns
-from scipy import stats
-from scipy.stats import norm, skewnorm
-from sklearn.ensemble import GradientBoostingRegressor as gbr
-from sklearn.linear_model import LogisticRegression as LR
-from sklearn.model_selection import train_test_split
 import streamlit as st
 from io import StringIO
-import time
+
 
 # Image file
 st.image('INDEX2.jpg', width=700)
