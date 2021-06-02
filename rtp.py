@@ -8,7 +8,7 @@ from io import StringIO
 
 
 # Image file
-st.image('INDEX2.jpg', width=700)
+st.image('INDEX2.JPG', width=700)
 
 # The Header
 st.markdown("<h1 style='text-align: center; color: red; '>RETRAIN PREDICTION APP</h1>" \
