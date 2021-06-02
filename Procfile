@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run rtp.py
+web: streamlit run --server.enableCORS false --server.port $PORT rtp.py
