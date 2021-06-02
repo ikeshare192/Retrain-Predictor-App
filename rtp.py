@@ -1,6 +1,7 @@
 import random
 import numpy as np
 import pandas as pd
+import pickle
 from matplotlib import pyplot as plt
 import seaborn as sns
 from scipy import stats
@@ -12,7 +13,7 @@ import streamlit as st
 from io import StringIO
 import time
 
-#st.image('INDEX2.jpg', width=700)
+st.image('INDEX2.jpg', width=700)
 #The Header
 st.markdown("<h1 style='text-align: center; color: red; '>RETRAIN PREDICTION APP</h1>" \
     , unsafe_allow_html=True)
@@ -28,16 +29,21 @@ st.write("The pupose of this application is to demonstrate the value of Machine 
 
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
+# loading the trained model
+pickle_in = open('lr.pkl', 'rb') 
+estimator = pickle.load(pickle_in)
+
 choose_option = st.selectbox(
     "Choose a Task",
     [
         " ",
         "1. Upload & Display Raw Data",
         "2. Create Data Bar Chart",
-        "3. Train Model and Predict"
+        "3. Make Individual Predictions",
+        "4. Make Batch Predictions"
     ]
     )
-@st.cache
+
 def upload_file():
     uploaded_file = st.file_uploader("", type = "csv")
     if uploaded_file is None:
@@ -67,6 +73,7 @@ def bar_chart(df):
     plt.title("Pilot Attributes Bar Chart", fontsize=16)
     return fig
 
+@st.cache
 def ml(df):
     y=df["# of Retrains"]
     X = df.drop("# of Retrains", axis=1)
@@ -77,16 +84,32 @@ def ml(df):
     return estimator
 
 #creates a sidebar slider
-def get_user_input(df):
+def get_user_input():
     value = []
-    names = df.columns
+    names = [
+        'Is Military',
+        'Is Civilian',
+        'Flew Fighter',
+        'Flew Cargo',
+        'Flew Corporate',
+        'Flew RJ',
+        'Arts Degree',
+        'Stem Degree',
+        'A-Hours',
+        'B-Hours',
+        'C-Hours',
+        'Prev Capt',
+        'Prev Rot-Wing'
+    ]
     dictionary = {}
+
     #iteration to create the sliders
     for name in names:
         minimum = 0 #as item because of the int32, int mismatch
         maximum = 1
         sliders = st.sidebar.slider(str(name), minimum, maximum, 1)
         value.append(sliders)
+
     #return value
     dictionary = dict(zip(names, value))
     features = pd.DataFrame(dictionary, index=[0])
@@ -96,7 +119,6 @@ def main():
     if choose_option == "1. Upload & Display Raw Data":
         df = upload_file()
         st.write(df.head(40))
-        
         return df
 
     if choose_option == "2. Create Data Bar Chart":
@@ -104,14 +126,22 @@ def main():
         fig = bar_chart(df)
         st.pyplot(fig)
 
-    if choose_option == "3. Train Model and Predict":
-        df=upload_file()
-        estimator = ml(df)
-        features = get_user_input(df.drop(columns = "# of Retrains"))
+    if choose_option == "3. Make Individual Predictions":
+        #df=upload_file()
+        #estimator = ml(df)
+        #features = get_user_input(df.drop(columns = "# of Retrains"))
+        features = get_user_input()
         st.write(features)
         output = np.round(estimator.predict(features))
         st.write(f" The prediction for this student is {abs(output.item()):.0f} retrain(s)")
-
-
+    
+    if choose_option == "4. Make Batch Predictions":
+        b_file = upload_file()
+        batch_est = estimator
+        b_file_array = np.array(b_file)
+        batch_retrains = batch_est.predict(b_file_array)
+        st.write(f'The class is predicted to generate \
+        {sum(batch_retrains)} retrains')
+        
 if __name__ == "__main__":
     main()
