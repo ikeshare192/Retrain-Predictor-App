@@ -39,13 +39,13 @@ estimator = pickle.load(pickle_in)
 # Creating the selectbox that enables you begin interaction
 choose_option = st.selectbox(
     "Choose a Task",
-    [
+        [
         " ",
         "1. Upload & Display Raw Data",
         "2. Create Data Bar Chart",
         "3. Make Individual Predictions",
         "4. Make Batch Predictions"
-    ]
+        ]
     )
 
 # Function to upload data
