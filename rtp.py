@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import pickle
+from sklearn.linear_model import LogisticRegression
 from matplotlib import pyplot as plt
 import seaborn as sns
 import streamlit as st
