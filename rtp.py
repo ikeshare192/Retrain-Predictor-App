@@ -27,7 +27,7 @@ st.write("The pupose of this application is to demonstrate the value of Machine 
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
 # Loading ML file
-estimator = load('lr.joblib')
+estimator = load('lr2.joblib')
 
 # Creating the selectbox that enables you begin interaction
 choose_option = st.selectbox(

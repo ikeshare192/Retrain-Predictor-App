@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\Elimanjuel\\Anaconda3\\envs\\Jupyter-Notebooks\\python.exe"
+    "python.pythonPath": "C:\\Users\\Elimanjuel\\Anaconda3\\envs\\Jupyter-Notebooks\\python.exe",
+    "jupyter.jupyterServerType": "local"
 }
