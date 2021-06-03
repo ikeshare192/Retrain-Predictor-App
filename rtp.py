@@ -1,11 +1,10 @@
 import numpy as np
 import pandas as pd
-import pickle
 from sklearn.linear_model import LogisticRegression
 from matplotlib import pyplot as plt
 import seaborn as sns
 import streamlit as st
-from io import StringIO
+from joblib import dump, load
 
 
 # Image file
@@ -27,9 +26,8 @@ st.write("The pupose of this application is to demonstrate the value of Machine 
 
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
-# loading the trained model
-pickle_in = open('lr.pkl', 'rb') 
-estimator = pickle.load(pickle_in)
+# Loading ML file
+estimator = load('lr.joblib')
 
 # Creating the selectbox that enables you begin interaction
 choose_option = st.selectbox(
